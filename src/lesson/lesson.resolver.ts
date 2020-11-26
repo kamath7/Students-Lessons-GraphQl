@@ -1,17 +1,26 @@
 //Similar to controller
 
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateLessonInput } from './lesson.input';
+import { LessonService } from './lesson.service';
 import { LessonType } from './lesson.type';
 
 @Resolver(of => LessonType)
 export class LessonResolver {
+  constructor(private lessonService: LessonService) {}
   @Query(returns => LessonType)
-  lesson() {
-    return {
-      id: 'lalalala',
-      name: 'Math',
-      startDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-    };
+  lesson(@Args('id') id: string) {
+    return this.lessonService.getLesson(id);
+  }
+
+  @Query(returns => LessonType)
+  lessons() {
+    return this.lessonService.getLessons();
+  }
+  @Mutation(returns => LessonType)
+  createLesson(
+    @Args('createLessonInput') createLessonInput: CreateLessonInput,
+  ) {
+    return this.lessonService.createLesson(createLessonInput);
   }
 }
